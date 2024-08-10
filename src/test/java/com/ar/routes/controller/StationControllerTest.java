@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(StationController.class)
@@ -60,5 +64,27 @@ public class StationControllerTest {
                                 .content(json)
                 )
                 .andExpect(status().isCreated());
+    }
+
+    /**
+     * Test if Station already exists
+     */
+    @Test
+    @Order(3)
+    public void getStations() throws Exception {
+
+        List<Station> stationList = new ArrayList<>();
+        Station stationA = Station.builder().id(1).name("A").build();
+        stationList.add(stationA);
+
+
+        when(service.getAll()).thenReturn(stationList);
+
+        mockMvc.perform(
+                        get("/stations")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                        .andExpect(jsonPath("$", hasSize(1)));
     }
 }
