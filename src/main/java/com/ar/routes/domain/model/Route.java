@@ -1,39 +1,28 @@
 package com.ar.routes.domain.model;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Route {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
     private Station origin;
+
+    @ManyToOne
     private Station destination;
+
     private double cost;
 
-    public Route(Station origin, Station destination, double cost) {
-        this.origin = origin;
-        this.destination = destination;
-        this.cost = cost;
-    }
-
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public Station getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(Station origin) {
-        this.origin = origin;
-    }
-
-    public Station getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Station destination) {
-        this.destination = destination;
-    }
 }
