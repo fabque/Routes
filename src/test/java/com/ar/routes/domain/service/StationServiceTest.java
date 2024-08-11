@@ -1,10 +1,8 @@
-package com.ar.routes.service;
+package com.ar.routes.domain.service;
 
 import com.ar.routes.domain.model.Station;
 import com.ar.routes.domain.repository.StationRepository;
-import com.ar.routes.domain.service.StationService;
 import com.ar.routes.domain.service.impl.StationServiceImpl;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

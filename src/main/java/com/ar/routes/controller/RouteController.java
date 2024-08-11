@@ -8,10 +8,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/routes")
@@ -29,4 +26,31 @@ public class RouteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    /**
+     *
+     * @param origin
+     * @param destiny
+     * @return
+     */
+    @GetMapping("/optimal")
+    public ResponseEntity<?> getOptimalRoute(@RequestParam Integer origin, @RequestParam Integer destiny) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(service.getOptimalRoute(origin, destiny));
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    /**
+     * Method to iniziate a basic routes with 4 stations named A, B, C and D
+     * The four stations are interconnected
+     * @return
+     */
+    @GetMapping("/initdb")
+    public ResponseEntity<?> initDatabaseRoutes() {
+        service.initDB();
+        return ResponseEntity.status(HttpStatus.OK).body("Iniciado");
+    }
+
 }
