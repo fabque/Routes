@@ -3,6 +3,7 @@ package com.ar.routes.controller;
 import com.ar.routes.domain.model.Route;
 import com.ar.routes.domain.model.Station;
 import com.ar.routes.domain.model.dto.CreateRouteDto;
+import com.ar.routes.domain.model.dto.RouteResponse;
 import com.ar.routes.domain.service.RouteService;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Test;
@@ -21,9 +22,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(RouteController.class)
+@WebMvcTest(PathController.class)
 @AutoConfigureMockMvc
-public class RouteControllerTest {
+public class PathControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,12 +85,12 @@ public class RouteControllerTest {
     public void getOptimalRoute_Success() throws Exception {
         Station origen = Station.builder().name("A").id(1L).build();
         Station destination = Station.builder().name("B").id(2L).build();
-
-        when(service.getOptimalRoute(anyLong(), anyLong())).thenReturn(List.of(origen, destination));
+        RouteResponse optimal = RouteResponse.builder().path(List.of(origen.getId(), destination.getId())).cost(1).build();
+        when(service.getOptimalRoute(anyLong(), anyLong())).thenReturn( optimal);
 
         mockMvc.perform(get("/paths/{origin}/{destiny}", 1L, 2L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.path", hasSize(2)));
     }
 
     @Test

@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/paths")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class RouteController {
+public class PathController {
     private final RouteService service;
 
     @PostMapping

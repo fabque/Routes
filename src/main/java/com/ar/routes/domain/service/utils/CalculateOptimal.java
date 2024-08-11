@@ -2,6 +2,7 @@ package com.ar.routes.domain.service.utils;
 
 import com.ar.routes.domain.model.Route;
 import com.ar.routes.domain.model.Station;
+import com.ar.routes.domain.model.dto.RouteResponse;
 
 import java.util.*;
 
@@ -14,9 +15,10 @@ public class CalculateOptimal {
      * @param routeList
      * @return
      */
-    public static List<Station> getOptimalRoute(Station origin, Station destiny, List<Station> stationList, List<Route> routeList) {
+    public static RouteResponse getOptimalRoute(Station origin, Station destiny, List<Station> stationList, List<Route> routeList) {
         if (routeList.isEmpty()) {
-            return new ArrayList<>();
+            List<Long> result = new ArrayList<>();
+            return RouteResponse.builder().path(result).cost(0).build();
         }
         Map<Station, Double> costs = new HashMap<>();
         Map<Station, Station> predecesors = new HashMap<>();
@@ -53,7 +55,7 @@ public class CalculateOptimal {
             }
         }
 
-        List<Station> rutaOptima = new LinkedList<>();
+        List<Long> path = new LinkedList<>();
         Station step = destiny;
 
         if (predecesors.get(step) == null) {
@@ -61,10 +63,10 @@ public class CalculateOptimal {
         }
 
         while (step != null) {
-            rutaOptima.add(0, step);
+            path.add(0, step.getId());
             step = predecesors.get(step);
         }
 
-        return rutaOptima;
+        return RouteResponse.builder().path(path).cost(costs.get(destiny)).build();
     }
 }

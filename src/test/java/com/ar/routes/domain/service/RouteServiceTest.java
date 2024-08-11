@@ -3,6 +3,7 @@ package com.ar.routes.domain.service;
 import com.ar.routes.domain.model.Route;
 import com.ar.routes.domain.model.Station;
 import com.ar.routes.domain.model.dto.CreateRouteDto;
+import com.ar.routes.domain.model.dto.RouteResponse;
 import com.ar.routes.domain.repository.RouteRepository;
 import com.ar.routes.domain.repository.StationRepository;
 import com.ar.routes.domain.service.impl.RouteServiceImpl;
@@ -129,7 +130,8 @@ public class RouteServiceTest {
     public void testGetOptimalRoute_Success() throws BadRequestException {
         List<Station> stationList = List.of(stationA, stationB);
         List<Route> routeList = List.of(new Route(routeId, stationA, stationB, 5));
-        List<Station> expectedRoute = List.of(stationA, stationB);
+        List<Long> expectedPath = List.of(stationA.getId(), stationB.getId());
+        RouteResponse expectedRouteResponse = RouteResponse.builder().path(expectedPath).cost(5).build();
 
         when(stationRepository.findById(idA)).thenReturn(Optional.of(stationA));
         when(stationRepository.findById(idB)).thenReturn(Optional.of(stationB));
@@ -138,11 +140,11 @@ public class RouteServiceTest {
 
         try (MockedStatic<CalculateOptimal> mockedCalculateOptimal = mockStatic(CalculateOptimal.class)) {
             mockedCalculateOptimal.when(() -> CalculateOptimal.getOptimalRoute(stationA, stationB, stationList, routeList))
-                    .thenReturn(expectedRoute);
+                    .thenReturn(expectedRouteResponse);
 
-            List<Station> result = service.getOptimalRoute(idA, idB);
+            RouteResponse result = service.getOptimalRoute(idA, idB);
 
-            Assertions.assertEquals(expectedRoute, result);
+            Assertions.assertEquals(expectedRouteResponse, result);
         }
     }
 

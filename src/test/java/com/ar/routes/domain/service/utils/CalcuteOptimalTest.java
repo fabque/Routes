@@ -2,6 +2,7 @@ package com.ar.routes.domain.service.utils;
 
 import com.ar.routes.domain.model.Route;
 import com.ar.routes.domain.model.Station;
+import com.ar.routes.domain.model.dto.RouteResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +22,10 @@ public class CalcuteOptimalTest{
                 new Route(2L, intermediate, destination, 2)
         );
 
-        List<Station> result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
+        RouteResponse result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
 
-        List<Station> expectedRoute = List.of(origin, intermediate, destination);
-        Assertions.assertEquals(expectedRoute, result);
+        List<Long> expectedRoute = List.of(origin.getId(), intermediate.getId(), destination.getId());
+        Assertions.assertEquals(expectedRoute, result.getPath());
     }
 
     @Test
@@ -38,7 +39,7 @@ public class CalcuteOptimalTest{
                 new Route(1L, origin, isolated, 2) // No route to destination
         );
 
-        List<Station> result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
+        RouteResponse result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
 
         Assertions.assertNull(result, "Expected no route found");
     }
@@ -51,9 +52,9 @@ public class CalcuteOptimalTest{
         List<Station> stationList = List.of(origin, destination);
         List<Route> routeList = new ArrayList<>(); // No routes available
 
-        List<Station> result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
+        RouteResponse result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
 
-        Assertions.assertTrue(result.isEmpty(), "Expected an empty list when no routes are available");
+        Assertions.assertTrue(result.getPath().isEmpty(), "Expected an empty list when no routes are available");
     }
 
 

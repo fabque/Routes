@@ -1,5 +1,6 @@
 package com.ar.routes.domain.service.impl;
 
+import com.ar.routes.domain.model.dto.RouteResponse;
 import com.ar.routes.domain.service.utils.CalculateOptimal;
 import com.ar.routes.domain.model.Route;
 import com.ar.routes.domain.model.Station;
@@ -53,7 +54,7 @@ public class RouteServiceImpl implements RouteService {
 
 
     @Override
-    public List<Station> getOptimalRoute(Long origen, Long destiny) throws BadRequestException {
+    public RouteResponse getOptimalRoute(Long origen, Long destiny) throws BadRequestException {
         Station origin = stationRepository.findById(origen).orElseThrow(()-> new BadRequestException(ORIGIN_NOT_FOUND));
         Station destination = stationRepository.findById(destiny).orElseThrow(()-> new BadRequestException(DESTINATION_NOT_FOUND));
         List<Station> stationList = stationRepository.findAll();
