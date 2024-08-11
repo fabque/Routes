@@ -34,10 +34,20 @@ public class RouteController {
         return service.getRoutes();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarRuta(@PathVariable Integer id) {
+        try {
+            service.deleteRoute(id);
+           return ResponseEntity.status(HttpStatus.OK).body(id);
+        } catch (BadRequestException e) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     /**
      *
-     * @param origin
-     * @param destiny
+     * @param origin Id of entity Station
+     * @param destiny Id of entity Station
      * @return
      */
     @GetMapping("/optimal")

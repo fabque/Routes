@@ -18,10 +18,8 @@ import java.util.List;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RouteController.class)
@@ -62,6 +60,28 @@ public class RouteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))));
     }
+
+
+    @Test
+    public void testEliminarRuta_Success() throws Exception {
+        Integer routeId = 1;
+
+        mockMvc.perform(delete("/routes/{id}", routeId))
+                .andExpect(status().isOk())
+                .andExpect(content().string(routeId.toString()));
+    }
+
+    @Test
+    public void testEliminarRuta_NotFound() throws Exception {
+        Integer routeId = 1;
+
+        doThrow(new BadRequestException("Route not found")).when(service).deleteRoute(routeId);
+
+        mockMvc.perform(delete("/routes/{id}", routeId))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Route not found"));
+    }
+
 
     @Test
     public void getOptimalRoute_Success() throws Exception {

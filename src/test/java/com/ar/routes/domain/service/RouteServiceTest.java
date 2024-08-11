@@ -92,6 +92,34 @@ public class RouteServiceTest {
     }
 
     /**
+     * test Delete route
+     * @throws BadRequestException
+     */
+    @Test
+    public void testDeleteRoute_Success() throws BadRequestException {
+        Integer routeId = 1;
+        Station stationA = Station.builder().id(1).name("A").build();
+        Station stationB = Station.builder().id(2).name("B").build();
+        Route route = new Route(routeId, stationA, stationB, 5);
+
+        when(repository.findById(routeId)).thenReturn(Optional.of(route));
+
+        service.deleteRoute(routeId);
+        verify(repository).delete(route);
+    }
+
+    @Test
+    public void testDeleteRoute_NotFound() {
+        Integer routeId = 1;
+        when(repository.findById(routeId)).thenReturn(Optional.empty());
+
+        BadRequestException exception = Assertions.assertThrows(BadRequestException.class, () -> {
+            service.deleteRoute(routeId);
+        });
+        Assertions.assertEquals("Not Found", exception.getMessage());
+    }
+
+    /**
      * Test getOptimalRoute
      * @throws BadRequestException
      */

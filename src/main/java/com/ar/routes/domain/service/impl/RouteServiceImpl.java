@@ -7,6 +7,7 @@ import com.ar.routes.domain.model.dto.CreateRouteDto;
 import com.ar.routes.domain.repository.RouteRepository;
 import com.ar.routes.domain.repository.StationRepository;
 import com.ar.routes.domain.service.RouteService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class RouteServiceImpl implements RouteService {
     public static final String ORIGIN_NOT_FOUND = "Origin Not Found";
     public static final String DESTINATION_NOT_FOUND = "Destination Not Found";
     public static final String COULD_NOT_BE_THE_SAME = "Origin and destination could not be the same";
+    public static final String NOT_FOUND = "Not Found";
 
     @Autowired
     private final RouteRepository repository;
@@ -42,6 +44,12 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public List<Route> getRoutes() {
         return repository.findAll();
+    }
+
+    @Override
+    public void deleteRoute(Integer id) throws BadRequestException {
+        Route route = repository.findById(id).orElseThrow(()-> new BadRequestException(NOT_FOUND));
+        repository.delete(route);
     }
 
 

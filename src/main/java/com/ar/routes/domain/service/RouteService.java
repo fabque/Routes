@@ -11,9 +11,11 @@ public interface RouteService {
 
     Route create(CreateRouteDto routeDto) throws BadRequestException;
 
+    List<Route> getRoutes();
+
+    void deleteRoute(Integer id) throws BadRequestException;
+
     List<Station> getOptimalRoute(Integer origen, Integer destiny) throws BadRequestException;
 
     void initDB();
-
-    List<Route> getRoutes();
 }
