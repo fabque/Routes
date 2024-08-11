@@ -15,4 +15,5 @@ public interface RouteService {
 
     void initDB();
 
+    List<Route> getRoutes();
 }

@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +71,25 @@ public class RouteServiceTest {
         Assertions.assertEquals(service.create(CreateRouteDto.builder().origin(1).destination(2).cost(10).build()).getId(), id);
     }
 
+    /**
+     * tests getRoutes
+     */
+    @Test
+    void testGetRoutes_Empty(){
+        when(repository.findAll()).thenReturn(new ArrayList<>());
+        Assertions.assertTrue(service.getRoutes().isEmpty());
+    }
+
+    @Test
+    void testGetRoutes_List(){
+        Station stationA = Station.builder().id(1).name("A").build();
+        Station stationB = Station.builder().id(2).name("B").build();
+        List<Route> routeList = new ArrayList<>();
+        routeList.add(Route.builder().origin(stationA).destination(stationB).cost(5).build());
+
+        when(repository.findAll()).thenReturn(routeList);
+        Assertions.assertEquals(service.getRoutes().size(), routeList.size());
+    }
 
     /**
      * Test getOptimalRoute

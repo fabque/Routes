@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
@@ -55,6 +56,12 @@ public class RouteControllerTest {
                 .andExpect(status().isCreated());
     }
 
+    @Test
+    void testGetRoutes() throws Exception {
+        mockMvc.perform(get("/routes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))));
+    }
 
     @Test
     public void getOptimalRoute_Success() throws Exception {
@@ -71,7 +78,7 @@ public class RouteControllerTest {
     }
 
     @Test
-    public void testGetStations_BadRequest() throws Exception {
+    public void testGetOptimalRoute_BadRequest() throws Exception {
         String errorMessage = "Origin Not Found";
 
         when(service.getOptimalRoute(anyInt(), anyInt())).thenThrow(new BadRequestException(errorMessage));

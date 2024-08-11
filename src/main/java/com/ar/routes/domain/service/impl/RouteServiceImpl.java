@@ -39,7 +39,10 @@ public class RouteServiceImpl implements RouteService {
         return repository.save(newRoute);
     }
 
-
+    @Override
+    public List<Route> getRoutes() {
+        return repository.findAll();
+    }
 
 
     @Override
@@ -74,4 +77,6 @@ public class RouteServiceImpl implements RouteService {
         Route r4 = Route.builder().origin(a).destination(d).cost(8).build();
         repository.saveAll(List.of(r1, r2, r3, r4));
     }
+
+
 }

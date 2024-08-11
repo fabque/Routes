@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/routes")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -25,6 +27,11 @@ public class RouteController {
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    public List<Route> obtenerRutas() {
+        return service.getRoutes();
     }
 
     /**
