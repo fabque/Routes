@@ -2,6 +2,7 @@ package com.ar.routes.controller;
 
 import com.ar.routes.domain.model.Station;
 import com.ar.routes.domain.service.StationService;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @WebMvcTest(StationController.class)
 @AutoConfigureMockMvc
@@ -86,5 +88,25 @@ public class StationControllerTest {
                 )
                 .andExpect(status().isOk())
                         .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    public void testDelete_Success() throws Exception {
+        Integer id = 1;
+
+        mockMvc.perform(delete("/stations/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(content().string(id.toString()));
+    }
+
+    @Test
+    public void testDelete_NotFound() throws Exception {
+        Integer id = 1;
+
+        doThrow(new BadRequestException("Route not found")).when(service).delete(id);
+
+        mockMvc.perform(delete("/stations/{id}", id))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Route not found"));
     }
 }

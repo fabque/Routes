@@ -4,6 +4,7 @@ import com.ar.routes.domain.model.Station;
 import com.ar.routes.domain.model.dto.CreateStationDto;
 import com.ar.routes.domain.service.StationService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +35,15 @@ public class StationController {
     @GetMapping
     public ResponseEntity<?> getStations() {
         return ResponseEntity.status(HttpStatus.OK).body(service.getAll());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteStation(@PathVariable Integer id) {
+        try {
+            service.delete(id);
+            return ResponseEntity.status(HttpStatus.OK).body(id);
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

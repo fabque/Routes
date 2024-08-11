@@ -3,6 +3,7 @@ package com.ar.routes.domain.service;
 import com.ar.routes.domain.model.Station;
 import com.ar.routes.domain.repository.StationRepository;
 import com.ar.routes.domain.service.impl.StationServiceImpl;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,5 +78,27 @@ public class StationServiceTest {
         stationList.add(stationB);
         when(repository.findAll()).thenReturn(stationList);
         Assertions.assertEquals(service.getAll().size(), stationList.size());
+    }
+
+    /**
+     * test Delete station
+     * @throws BadRequestException
+     */
+    @Test
+    public void testDeleteStation_Success() throws BadRequestException {
+        when(repository.findById(idA)).thenReturn(Optional.of(stationA));
+
+        service.delete(idA);
+        verify(repository).delete(stationA);
+    }
+
+    @Test
+    public void testDeleteRoute_NotFound() {
+        when(repository.findById(idA)).thenReturn(Optional.empty());
+
+        BadRequestException exception = Assertions.assertThrows(BadRequestException.class, () -> {
+            service.delete(idA);
+        });
+        Assertions.assertEquals("Not Found", exception.getMessage());
     }
 }
