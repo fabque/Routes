@@ -30,12 +30,12 @@ public class RouteController {
     }
 
     @GetMapping
-    public List<Route> obtenerRutas() {
+    public List<Route> getRoutes() {
         return service.getRoutes();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarRuta(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteRoutes(@PathVariable Integer id) {
         try {
             service.deleteRoute(id);
            return ResponseEntity.status(HttpStatus.OK).body(id);

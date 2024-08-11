@@ -63,7 +63,7 @@ public class RouteControllerTest {
 
 
     @Test
-    public void testEliminarRuta_Success() throws Exception {
+    public void testDelete_Success() throws Exception {
         Integer routeId = 1;
 
         mockMvc.perform(delete("/routes/{id}", routeId))
@@ -72,7 +72,7 @@ public class RouteControllerTest {
     }
 
     @Test
-    public void testEliminarRuta_NotFound() throws Exception {
+    public void testDelete_NotFound() throws Exception {
         Integer routeId = 1;
 
         doThrow(new BadRequestException("Route not found")).when(service).deleteRoute(routeId);
