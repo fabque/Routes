@@ -98,9 +98,7 @@ public class RouteControllerTest {
 
         when(service.getOptimalRoute(anyLong(), anyLong())).thenThrow(new BadRequestException(errorMessage));
 
-        mockMvc.perform(get("/paths/optimal")
-                        .param("origin", "1")
-                        .param("destiny", "2"))
+        mockMvc.perform(get("/paths/{origin}/{destiny}", 1L, 2L))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(errorMessage));
     }
