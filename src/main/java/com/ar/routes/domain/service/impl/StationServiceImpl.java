@@ -1,6 +1,7 @@
 package com.ar.routes.domain.service.impl;
 
 import com.ar.routes.domain.model.Station;
+import com.ar.routes.domain.model.dto.CreateEditStationDto;
 import com.ar.routes.domain.repository.StationRepository;
 import com.ar.routes.domain.service.StationService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,6 +28,19 @@ public class StationServiceImpl implements StationService {
             return newStation;
         }
         return repository.save(newStation);
+    }
+
+    @Override
+    public Station edit(Long id, CreateEditStationDto editStationDto) throws BadRequestException {
+        Station existing = repository.findById(id).orElseThrow(()-> new BadRequestException(NOT_FOUND));
+        Optional<Station> optionalStation = repository.findStationByName(editStationDto.getName());
+        if (optionalStation.isEmpty() || optionalStation.get().getId() == id) { //not exists another with same name
+                existing.setName(editStationDto.getName());
+                repository.save(existing);
+                return existing;
+        } else {
+            throw new BadRequestException(NOT_FOUND);
+        }
     }
 
     @Override

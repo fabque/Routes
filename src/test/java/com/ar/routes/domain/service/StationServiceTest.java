@@ -1,6 +1,7 @@
 package com.ar.routes.domain.service;
 
 import com.ar.routes.domain.model.Station;
+import com.ar.routes.domain.model.dto.CreateEditStationDto;
 import com.ar.routes.domain.repository.StationRepository;
 import com.ar.routes.domain.service.impl.StationServiceImpl;
 import org.apache.coyote.BadRequestException;
@@ -63,6 +64,48 @@ public class StationServiceTest {
                 .thenReturn(Optional.ofNullable(null));
         when(repository.save(any())).thenReturn(newStation);
         Assertions.assertEquals(service.add(name).getId(), idA);
+    }
+
+    @Test
+    public void testEditStation_Success() throws BadRequestException {
+        Long stationId = 1L;
+        CreateEditStationDto editDto = new CreateEditStationDto("NewName");
+        Station existingStation = new Station(stationId, "OldName");
+
+        when(repository.findById(stationId)).thenReturn(Optional.of(existingStation));
+        when(repository.findStationByName(editDto.getName())).thenReturn(Optional.empty());
+
+        Station result = service.edit(stationId, editDto);
+
+        verify(repository).save(existingStation);
+        Assertions.assertEquals("NewName", result.getName());
+    }
+
+    @Test
+    public void testEditStation_DuplicateName() {
+        Long stationId = 1L;
+        CreateEditStationDto editDto = new CreateEditStationDto("ExistingName");
+        Station existingStation = new Station(stationId, "OldName");
+        Station anotherStation = new Station(2L, "ExistingName");
+
+        when(repository.findById(stationId)).thenReturn(Optional.of(existingStation));
+        when(repository.findStationByName(editDto.getName())).thenReturn(Optional.of(anotherStation));
+
+        Assertions.assertThrows(BadRequestException.class, () -> {
+            service.edit(stationId, editDto);
+        });
+    }
+
+    @Test
+    public void testEditStation_NotFound() {
+        Long stationId = 1L;
+        CreateEditStationDto editDto = new CreateEditStationDto("NewName");
+
+        when(repository.findById(stationId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(BadRequestException.class, () -> {
+            service.edit(stationId, editDto);
+        });
     }
 
     @Test

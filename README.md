@@ -14,6 +14,8 @@ On the other hand if you want an small example example you can use the following
 ```
 http://localhost:8080/routes/initdb
 ```
+For Putting a new station or new route the registers must exists or return exception Not Found
+
 
 ## Build image and run local
 Using dockerFile 

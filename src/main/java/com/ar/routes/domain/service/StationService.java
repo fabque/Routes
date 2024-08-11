@@ -10,4 +10,6 @@ public interface StationService {
     Station add(String station);
     List<Station> getAll();
     void delete(Long id) throws BadRequestException;
+
+    Station edit(Long id, CreateEditStationDto editStationDto) throws BadRequestException;
 }

@@ -28,6 +28,17 @@ public class StationController {
         return (saved.getId() == null) ? ResponseEntity.status(HttpStatus.CONFLICT).build() : ResponseEntity.status(HttpStatus.CREATED).body(saved.getId());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Long> putStation(@PathVariable Long id, @RequestBody CreateEditStationDto editStationDto) {
+        Station saved = null;
+        try {
+            saved = service.edit(id, editStationDto);
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(saved.getId());
+    }
+
     /**
      * get all Stations
      * @return

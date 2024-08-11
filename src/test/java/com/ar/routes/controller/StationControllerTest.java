@@ -1,6 +1,7 @@
 package com.ar.routes.controller;
 
 import com.ar.routes.domain.model.Station;
+import com.ar.routes.domain.model.dto.CreateEditStationDto;
 import com.ar.routes.domain.service.StationService;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Order;
@@ -38,7 +39,7 @@ public class StationControllerTest {
      */
     @Test
     @Order(1)
-    public void checkIfAlreadyExists() throws Exception {
+    public void testCreate_checkIfAlreadyExists() throws Exception {
         String json = "{\"name\": \"A\"}";
 
         when(service.add("A")).thenReturn(Station.builder().name("A").build());
@@ -56,7 +57,7 @@ public class StationControllerTest {
      */
     @Test
     @Order(2)
-    public void checkCreated() throws Exception {
+    public void checkCreated_OK() throws Exception {
         String json = "{\"name\": \"A\"}";
 
         when(service.add("A")).thenReturn(Station.builder().id(id).name("A").build());
@@ -69,11 +70,38 @@ public class StationControllerTest {
                 .andExpect(status().isCreated());
     }
 
+    @Test
+    public void testPutStation_Success() throws Exception {
+
+        CreateEditStationDto editDto = new CreateEditStationDto("NewName");
+        Station savedStation = new Station(id, "NewName");
+
+        when(service.edit(id, editDto)).thenReturn(savedStation);
+
+        mockMvc.perform(put("/stations/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"NewName\"}"))
+                .andExpect(status().isAccepted())
+                .andExpect(content().string(id.toString()));
+    }
+
+    @Test
+    public void testPutStation_BadRequest() throws Exception {
+        CreateEditStationDto editDto = new CreateEditStationDto("ExistingName");
+
+        when(service.edit(id, editDto)).thenThrow(new BadRequestException("Not Found"));
+
+        mockMvc.perform(put("/stations/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"ExistingName\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+
     /**
      * Test if Station already exists
      */
     @Test
-    @Order(3)
     public void getStations() throws Exception {
 
         List<Station> stationList = new ArrayList<>();
