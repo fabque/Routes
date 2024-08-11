@@ -9,6 +9,7 @@ import com.ar.routes.domain.service.impl.RouteServiceImpl;
 import com.ar.routes.domain.service.utils.CalculateOptimal;
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,16 @@ public class RouteServiceTest {
     @InjectMocks
     private RouteServiceImpl service;
 
+    private static final String  nameA = "A";
+    private static final String  nameB = "B";
+    private static final Integer idA = 1;
+    private static final Integer idB = 2;
+    private static final Integer routeId = 1;
+    Station stationA = Station.builder().id(idA).name(nameA).build();
+    Station stationB = Station.builder().id(idA).name(nameB).build();
+    Route route = new Route(routeId, stationA, stationB, 5);
+
+
     /**
      * Tests Create Route
      * @throws BadRequestException
@@ -55,7 +66,7 @@ public class RouteServiceTest {
 
     @Test
     void testCreateRoute_BadDestination() throws BadRequestException {
-        when(stationRepository.findById(1)).thenReturn(Optional.of(Station.builder().id(1).name("A").build()));
+        when(stationRepository.findById(1)).thenReturn(Optional.of(stationA));
         when(stationRepository.findById(2)).thenReturn(Optional.ofNullable(null));
         Assertions.assertThrows(BadRequestException.class,
                 () -> service.create(CreateRouteDto.builder().origin(1).destination(2).cost(10).build()));
@@ -64,11 +75,11 @@ public class RouteServiceTest {
 
     @Test
     void testCreateRoute_OK() throws BadRequestException {
-        Integer id = 1;
-        when(stationRepository.findById(1)).thenReturn(Optional.of(Station.builder().id(1).name("A").build()));
-        when(stationRepository.findById(2)).thenReturn(Optional.of(Station.builder().id(2).name("B").build()));
-        when(repository.save(any(Route.class))).thenReturn(Route.builder().id(id).build());
-        Assertions.assertEquals(service.create(CreateRouteDto.builder().origin(1).destination(2).cost(10).build()).getId(), id);
+
+        when(stationRepository.findById(idA)).thenReturn(Optional.of(stationA));
+        when(stationRepository.findById(idB)).thenReturn(Optional.of(stationB));
+        when(repository.save(any(Route.class))).thenReturn(Route.builder().id(routeId).build());
+        Assertions.assertEquals(service.create(CreateRouteDto.builder().origin(idA).destination(idB).cost(10).build()).getId(), routeId);
     }
 
     /**
@@ -82,8 +93,6 @@ public class RouteServiceTest {
 
     @Test
     void testGetRoutes_List(){
-        Station stationA = Station.builder().id(1).name("A").build();
-        Station stationB = Station.builder().id(2).name("B").build();
         List<Route> routeList = new ArrayList<>();
         routeList.add(Route.builder().origin(stationA).destination(stationB).cost(5).build());
 
@@ -97,11 +106,6 @@ public class RouteServiceTest {
      */
     @Test
     public void testDeleteRoute_Success() throws BadRequestException {
-        Integer routeId = 1;
-        Station stationA = Station.builder().id(1).name("A").build();
-        Station stationB = Station.builder().id(2).name("B").build();
-        Route route = new Route(routeId, stationA, stationB, 5);
-
         when(repository.findById(routeId)).thenReturn(Optional.of(route));
 
         service.deleteRoute(routeId);
@@ -110,7 +114,6 @@ public class RouteServiceTest {
 
     @Test
     public void testDeleteRoute_NotFound() {
-        Integer routeId = 1;
         when(repository.findById(routeId)).thenReturn(Optional.empty());
 
         BadRequestException exception = Assertions.assertThrows(BadRequestException.class, () -> {
@@ -125,19 +128,17 @@ public class RouteServiceTest {
      */
     @Test
     public void testGetOptimalRoute_Success() throws BadRequestException {
-        Station origin = new Station(1, "A");
-        Station destination = new Station(2, "B");
-        List<Station> stationList = List.of(origin, destination);
-        List<Route> routeList = List.of(new Route(1, origin, destination, 5));
-        List<Station> expectedRoute = List.of(origin, destination);
+        List<Station> stationList = List.of(stationA, stationB);
+        List<Route> routeList = List.of(new Route(1, stationA, stationB, 5));
+        List<Station> expectedRoute = List.of(stationA, stationB);
 
-        when(stationRepository.findById(1)).thenReturn(Optional.of(origin));
-        when(stationRepository.findById(2)).thenReturn(Optional.of(destination));
+        when(stationRepository.findById(1)).thenReturn(Optional.of(stationA));
+        when(stationRepository.findById(2)).thenReturn(Optional.of(stationB));
         when(stationRepository.findAll()).thenReturn(stationList);
         when(repository.findAll()).thenReturn(routeList);
 
         try (MockedStatic<CalculateOptimal> mockedCalculateOptimal = mockStatic(CalculateOptimal.class)) {
-            mockedCalculateOptimal.when(() -> CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList))
+            mockedCalculateOptimal.when(() -> CalculateOptimal.getOptimalRoute(stationA, stationB, stationList, routeList))
                     .thenReturn(expectedRoute);
 
             List<Station> result = service.getOptimalRoute(1, 2);
