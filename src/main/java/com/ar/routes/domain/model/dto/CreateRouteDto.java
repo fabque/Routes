@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class CreateRouteDto {
-    private Integer origin;
-    private Integer destination;
+    private Long origin;
+    private Long destination;
     private double cost;
 }

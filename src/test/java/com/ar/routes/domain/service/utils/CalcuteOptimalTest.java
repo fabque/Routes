@@ -11,14 +11,14 @@ public class CalcuteOptimalTest{
 
     @Test
     public void testGetOptimalRoute_Success() {
-        Station origin = new Station(1, "A");
-        Station destination = new Station(2, "B");
-        Station intermediate = new Station(3, "C");
+        Station origin = new Station(1L, "A");
+        Station destination = new Station(2L, "B");
+        Station intermediate = new Station(3L, "C");
 
         List<Station> stationList = List.of(origin, destination, intermediate);
         List<Route> routeList = List.of(
-                new Route(1, origin, intermediate, 2),
-                new Route(2, intermediate, destination, 2)
+                new Route(1L, origin, intermediate, 2),
+                new Route(2L, intermediate, destination, 2)
         );
 
         List<Station> result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
@@ -29,13 +29,13 @@ public class CalcuteOptimalTest{
 
     @Test
     public void testGetOptimalRoute_NoRouteFound() {
-        Station origin = new Station(1, "A");
-        Station destination = new Station(2, "B");
-        Station isolated = new Station(3, "C");
+        Station origin = new Station(1L, "A");
+        Station destination = new Station(2L, "B");
+        Station isolated = new Station(3L, "C");
 
         List<Station> stationList = List.of(origin, destination, isolated);
         List<Route> routeList = List.of(
-                new Route(1, origin, isolated, 2) // No route to destination
+                new Route(1L, origin, isolated, 2) // No route to destination
         );
 
         List<Station> result = CalculateOptimal.getOptimalRoute(origin, destination, stationList, routeList);
@@ -45,8 +45,8 @@ public class CalcuteOptimalTest{
 
     @Test
     public void testGetOptimalRoute_EmptyRouteList() {
-        Station origin = new Station(1, "A");
-        Station destination = new Station(2, "B");
+        Station origin = new Station(1L, "A");
+        Station destination = new Station(2L, "B");
 
         List<Station> stationList = List.of(origin, destination);
         List<Route> routeList = new ArrayList<>(); // No routes available

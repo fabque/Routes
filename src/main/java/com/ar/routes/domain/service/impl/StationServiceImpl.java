@@ -34,7 +34,7 @@ public class StationServiceImpl implements StationService {
     }
 
     @Override
-    public void delete(Integer id) throws BadRequestException {
+    public void delete(Long id) throws BadRequestException {
         Station entity = repository.findById(id).orElseThrow(()-> new BadRequestException(NOT_FOUND));
         repository.delete(entity);
     }

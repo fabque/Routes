@@ -13,9 +13,9 @@ public interface RouteService {
 
     List<Route> getRoutes();
 
-    void deleteRoute(Integer id) throws BadRequestException;
+    void deleteRoute(Long id) throws BadRequestException;
 
-    List<Station> getOptimalRoute(Integer origen, Integer destiny) throws BadRequestException;
+    List<Station> getOptimalRoute(Long origen, Long destiny) throws BadRequestException;
 
     void initDB();
 }

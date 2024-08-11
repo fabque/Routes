@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/routes")
+@RequestMapping("/paths")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RouteController {
     private final RouteService service;
@@ -35,7 +35,7 @@ public class RouteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRoutes(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteRoutes(@PathVariable Long id) {
         try {
             service.deleteRoute(id);
            return ResponseEntity.status(HttpStatus.OK).body(id);
@@ -47,13 +47,13 @@ public class RouteController {
     /**
      *
      * @param origin Id of entity Station
-     * @param destiny Id of entity Station
+     * @param destination Id of entity Station
      * @return
      */
-    @GetMapping("/optimal")
-    public ResponseEntity<?> getOptimalRoute(@RequestParam Integer origin, @RequestParam Integer destiny) {
+    @GetMapping("/{origin}/{destination}")
+    public ResponseEntity<?> getOptimalRoute(@PathVariable Long origin, @PathVariable Long destination) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(service.getOptimalRoute(origin, destiny));
+            return ResponseEntity.status(HttpStatus.OK).body(service.getOptimalRoute(origin, destination));
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

@@ -32,6 +32,7 @@ public class StationControllerTest {
     @MockBean
     private StationService service;
 
+    private static final Long id = 1L;
     /**
      * Test if Station already exists
      */
@@ -58,7 +59,7 @@ public class StationControllerTest {
     public void checkCreated() throws Exception {
         String json = "{\"name\": \"A\"}";
 
-        when(service.add("A")).thenReturn(Station.builder().id(1).name("A").build());
+        when(service.add("A")).thenReturn(Station.builder().id(id).name("A").build());
 
         mockMvc.perform(
                         post("/stations")
@@ -76,7 +77,7 @@ public class StationControllerTest {
     public void getStations() throws Exception {
 
         List<Station> stationList = new ArrayList<>();
-        Station stationA = Station.builder().id(1).name("A").build();
+        Station stationA = Station.builder().id(id).name("A").build();
         stationList.add(stationA);
 
 
@@ -92,8 +93,6 @@ public class StationControllerTest {
 
     @Test
     public void testDelete_Success() throws Exception {
-        Integer id = 1;
-
         mockMvc.perform(delete("/stations/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().string(id.toString()));
@@ -101,8 +100,6 @@ public class StationControllerTest {
 
     @Test
     public void testDelete_NotFound() throws Exception {
-        Integer id = 1;
-
         doThrow(new BadRequestException("Route not found")).when(service).delete(id);
 
         mockMvc.perform(delete("/stations/{id}", id))

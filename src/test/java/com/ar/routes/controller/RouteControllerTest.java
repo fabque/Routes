@@ -17,7 +17,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,12 +31,14 @@ public class RouteControllerTest {
     @MockBean
     private RouteService service;
 
+    private static final Long routeId = 1L;
+
     @Test
     void createRouteOriginOrDestionation_NotFound() throws Exception {
-        when(service.create(CreateRouteDto.builder().origin(1).destination(2).cost(10).build())).thenThrow(BadRequestException.class);
+        when(service.create(CreateRouteDto.builder().origin(1L).destination(2L).cost(10).build())).thenThrow(BadRequestException.class);
         String json = "{ \"origin\":  1 , \"destination\": 2, \"cost\": 10 }";
         mockMvc.perform(
-                post("/routes")
+                post("/paths")
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isBadRequest());
@@ -45,10 +46,10 @@ public class RouteControllerTest {
 
     @Test
     void createRoute_OK() throws Exception {
-        when(service.create(CreateRouteDto.builder().origin(1).destination(2).cost(10).build())).thenReturn(Route.builder().id(1).build());
+        when(service.create(CreateRouteDto.builder().origin(1L).destination(2L).cost(10).build())).thenReturn(Route.builder().id(1L).build());
         String json = "{ \"origin\":  1 , \"destination\": 2, \"cost\": 10 }";
         mockMvc.perform(
-                        post("/routes")
+                        post("/paths")
                                 .contentType("application/json")
                                 .content(json))
                 .andExpect(status().isCreated());
@@ -56,7 +57,7 @@ public class RouteControllerTest {
 
     @Test
     void testGetRoutes() throws Exception {
-        mockMvc.perform(get("/routes"))
+        mockMvc.perform(get("/paths"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))));
     }
@@ -64,20 +65,16 @@ public class RouteControllerTest {
 
     @Test
     public void testDelete_Success() throws Exception {
-        Integer routeId = 1;
-
-        mockMvc.perform(delete("/routes/{id}", routeId))
+        mockMvc.perform(delete("/paths/{id}", routeId))
                 .andExpect(status().isOk())
                 .andExpect(content().string(routeId.toString()));
     }
 
     @Test
     public void testDelete_NotFound() throws Exception {
-        Integer routeId = 1;
-
         doThrow(new BadRequestException("Route not found")).when(service).deleteRoute(routeId);
 
-        mockMvc.perform(delete("/routes/{id}", routeId))
+        mockMvc.perform(delete("/paths/{id}", routeId))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Route not found"));
     }
@@ -85,14 +82,12 @@ public class RouteControllerTest {
 
     @Test
     public void getOptimalRoute_Success() throws Exception {
-        Station origen = Station.builder().name("A").id(1).build();
-        Station destination = Station.builder().name("B").id(2).build();
+        Station origen = Station.builder().name("A").id(1L).build();
+        Station destination = Station.builder().name("B").id(2L).build();
 
-        when(service.getOptimalRoute(anyInt(), anyInt())).thenReturn(List.of(origen, destination));
+        when(service.getOptimalRoute(anyLong(), anyLong())).thenReturn(List.of(origen, destination));
 
-        mockMvc.perform(get("/routes/optimal")
-                        .param("origin", "1")
-                        .param("destiny", "2"))
+        mockMvc.perform(get("/paths/{origin}/{destiny}", 1L, 2L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -101,9 +96,9 @@ public class RouteControllerTest {
     public void testGetOptimalRoute_BadRequest() throws Exception {
         String errorMessage = "Origin Not Found";
 
-        when(service.getOptimalRoute(anyInt(), anyInt())).thenThrow(new BadRequestException(errorMessage));
+        when(service.getOptimalRoute(anyLong(), anyLong())).thenThrow(new BadRequestException(errorMessage));
 
-        mockMvc.perform(get("/routes/optimal")
+        mockMvc.perform(get("/paths/optimal")
                         .param("origin", "1")
                         .param("destiny", "2"))
                 .andExpect(status().isBadRequest())
@@ -115,7 +110,7 @@ public class RouteControllerTest {
         doNothing().when(service).initDB();
 
         mockMvc.perform(
-                        get("/routes/initdb")
+                        get("/paths/initdb")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())

@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class CreateStationDto {
+public class CreateEditStationDto {
     @NonNull
     private String name;
 }

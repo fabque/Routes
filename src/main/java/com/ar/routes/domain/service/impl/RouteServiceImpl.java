@@ -7,7 +7,6 @@ import com.ar.routes.domain.model.dto.CreateRouteDto;
 import com.ar.routes.domain.repository.RouteRepository;
 import com.ar.routes.domain.repository.StationRepository;
 import com.ar.routes.domain.service.RouteService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +46,14 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public void deleteRoute(Integer id) throws BadRequestException {
+    public void deleteRoute(Long id) throws BadRequestException {
         Route route = repository.findById(id).orElseThrow(()-> new BadRequestException(NOT_FOUND));
         repository.delete(route);
     }
 
 
     @Override
-    public List<Station> getOptimalRoute(Integer origen, Integer destiny) throws BadRequestException {
+    public List<Station> getOptimalRoute(Long origen, Long destiny) throws BadRequestException {
         Station origin = stationRepository.findById(origen).orElseThrow(()-> new BadRequestException(ORIGIN_NOT_FOUND));
         Station destination = stationRepository.findById(destiny).orElseThrow(()-> new BadRequestException(DESTINATION_NOT_FOUND));
         List<Station> stationList = stationRepository.findAll();

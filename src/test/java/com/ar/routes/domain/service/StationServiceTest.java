@@ -31,8 +31,8 @@ public class StationServiceTest {
 
     private static final String  nameA = "A";
     private static final String  nameB = "B";
-    private static final Integer idA = 1;
-    private static final Integer idB = 2;
+    private static final Long idA = 1L;
+    private static final Long idB = 2L;
 
     private Station newStation;
     private Station stationA;
@@ -57,12 +57,12 @@ public class StationServiceTest {
     @Test
     void addStationSuccess() {
         String name = "A";
-        Integer id = 1;
-        Station newStation = Station.builder().id(id).name(name).build();
+
+        Station newStation = Station.builder().id(idA).name(name).build();
         when(repository.findStationByName(name))
                 .thenReturn(Optional.ofNullable(null));
         when(repository.save(any())).thenReturn(newStation);
-        Assertions.assertEquals(service.add(name).getId(), id);
+        Assertions.assertEquals(service.add(name).getId(), idA);
     }
 
     @Test
