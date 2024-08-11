@@ -15,6 +15,17 @@ On the other hand if you want an small example example you can use the following
 http://localhost:8080/routes/initdb
 ```
 
+## Build image and run local
+Using dockerFile 
+Build image using this command
+```
+docker build -t springio/routes .
+```
+
+Run docker image using this command
+```
+docker run -it -p 8080:8080 springio/routes
+```
 
 ### Documentation  
 You can access at this link
