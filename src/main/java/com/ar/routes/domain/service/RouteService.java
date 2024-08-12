@@ -19,4 +19,6 @@ public interface RouteService {
     RouteResponse getOptimalRoute(Long origen, Long destiny) throws BadRequestException;
 
     void initDB();
+
+    Route edit(Long id, CreateRouteDto editRouteDto) throws BadRequestException;
 }

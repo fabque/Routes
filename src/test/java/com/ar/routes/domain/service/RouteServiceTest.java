@@ -83,6 +83,71 @@ public class RouteServiceTest {
     }
 
     /**
+     * test Edit Route
+     * @throws BadRequestException
+     */
+    @Test
+    public void testEditRoute_Success() throws BadRequestException {
+        CreateRouteDto editDto = new CreateRouteDto(idA, idB, 50);
+        Route existingRoute = new Route(routeId, stationA, stationB, 10);
+
+
+        when(repository.findById(routeId)).thenReturn(Optional.of(existingRoute));
+        when(stationRepository.findById(editDto.getOrigin())).thenReturn(Optional.of(stationA));
+        when(stationRepository.findById(editDto.getDestination())).thenReturn(Optional.of(stationB));
+        when(repository.save(existingRoute)).thenReturn(existingRoute);
+
+        Route result = service.edit(routeId, editDto);
+
+        verify(repository).save(existingRoute);
+        Assertions.assertEquals(50, result.getCost());
+        Assertions.assertEquals(stationA, result.getOrigin());
+        Assertions.assertEquals(stationB, result.getDestination());
+    }
+
+    @Test
+    public void testEditRoute_NotFound() {
+        Long routeId = 1L;
+        CreateRouteDto editDto = new CreateRouteDto(1L, 2L, 50);
+
+        when(repository.findById(routeId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(BadRequestException.class, () -> {
+            service.edit(routeId, editDto);
+        });
+    }
+
+    @Test
+    public void testEditRoute_OriginNotFound() {
+        Long routeId = 1L;
+        CreateRouteDto editDto = new CreateRouteDto(1L, 2L, 50);
+        Route existingRoute = new Route(routeId, new Station(1L, "A"), new Station(2L, "B"), 10);
+
+        when(repository.findById(routeId)).thenReturn(Optional.of(existingRoute));
+        when(stationRepository.findById(editDto.getOrigin())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(BadRequestException.class, () -> {
+            service.edit(routeId, editDto);
+        });
+    }
+
+    @Test
+    public void testEditRoute_DestinationNotFound() {
+        Long routeId = 1L;
+        CreateRouteDto editDto = new CreateRouteDto(1L, 2L, 50);
+        Route existingRoute = new Route(routeId, new Station(1L, "A"), new Station(2L, "B"), 10);
+        Station origin = new Station(1L, "A");
+
+        when(repository.findById(routeId)).thenReturn(Optional.of(existingRoute));
+        when(stationRepository.findById(editDto.getOrigin())).thenReturn(Optional.of(origin));
+        when(stationRepository.findById(editDto.getDestination())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(BadRequestException.class, () -> {
+            service.edit(routeId, editDto);
+        });
+    }
+
+    /**
      * tests getRoutes
      */
     @Test

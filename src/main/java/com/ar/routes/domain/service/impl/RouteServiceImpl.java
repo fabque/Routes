@@ -41,6 +41,19 @@ public class RouteServiceImpl implements RouteService {
         return repository.save(newRoute);
     }
 
+
+    @Override
+    public Route edit(Long id, CreateRouteDto editRouteDto) throws BadRequestException {
+        Route edit = repository.findById(id).orElseThrow(() -> new BadRequestException(NOT_FOUND));
+        Station origin =  stationRepository.findById(editRouteDto.getOrigin()).orElseThrow(() -> new BadRequestException(ORIGIN_NOT_FOUND));
+        Station destination =  stationRepository.findById(editRouteDto.getDestination()).orElseThrow(() -> new BadRequestException(DESTINATION_NOT_FOUND));
+        edit.setCost(editRouteDto.getCost());
+        edit.setOrigin(origin);
+        edit.setDestination(destination);
+
+        return repository.save(edit);
+    }
+
     @Override
     public List<Route> getRoutes() {
         return repository.findAll();

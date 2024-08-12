@@ -29,6 +29,17 @@ public class PathController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> putRoutes(@PathVariable Long id, @RequestBody CreateRouteDto editRouteDto) {
+        try {
+            Route edited = service.edit(id, editRouteDto);
+            return ResponseEntity.status(HttpStatus.OK).body(edited);
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
     @GetMapping
     public List<Route> getRoutes() {
         return service.getRoutes();
