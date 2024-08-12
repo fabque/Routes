@@ -57,6 +57,36 @@ public class PathControllerTest {
     }
 
     @Test
+    public void testPutRoute_Success() throws Exception {
+        Long routeId = 1L;
+        CreateRouteDto editDto = new CreateRouteDto(1L, 2L, 50);
+        Route editedRoute = new Route(routeId, new Station(1L, "A"), new Station(2L, "B"), 50);
+
+        when(service.edit(routeId, editDto)).thenReturn(editedRoute);
+
+        mockMvc.perform(put("/paths/{id}", routeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"origin\": 1, \"destination\": 2, \"cost\": 50}"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"id\": 1, \"origin\": {\"id\": 1, \"name\": \"A\"}, \"destination\": {\"id\": 2, \"name\": \"B\"}, \"cost\": 50}"));
+    }
+
+    @Test
+    public void testPutRoute_NotFound() throws Exception {
+        Long routeId = 1L;
+        CreateRouteDto editDto = new CreateRouteDto(1L, 2L, 50);
+
+        when(service.edit(routeId, editDto)).thenThrow(new BadRequestException("Route not found"));
+
+        mockMvc.perform(put("/paths/{id}", routeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"origin\": 1, \"destination\": 2, \"cost\": 50}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Route not found"));
+    }
+
+
+    @Test
     void testGetRoutes() throws Exception {
         mockMvc.perform(get("/paths"))
                 .andExpect(status().isOk())
